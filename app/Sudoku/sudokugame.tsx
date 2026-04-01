@@ -1,6 +1,6 @@
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
 
 type Cell = {
     value: string;
@@ -69,8 +69,8 @@ function generateSolvedBoard(): Board {
     return grid;
 }
 
-function generatePuzzle(difficulty: string): Cell[][] {
-    const solved = generateSolvedBoard();
+function generatePuzzleFromSolution(solved: Board, difficulty: string): Cell[][] {
+    const puzzle = solved.map(row => [...row]);
 
     let removeCount = 
     difficulty === 'easy' ? 25 :
@@ -80,13 +80,13 @@ function generatePuzzle(difficulty: string): Cell[][] {
         const row = Math.floor(Math.random() * 9);
         const col = Math.floor(Math.random() * 9);
 
-        if (solved[row][col] !== 0) {
-            solved[row][col] = 0;
+        if (puzzle[row][col] !== 0) {
+            puzzle[row][col] = 0;
             removeCount--;
         }
     }
 
-    return solved.map(row => row.map(value => ({
+    return puzzle.map(row => row.map(value => ({
         value: value === 0 ? '' : String(value),
         fixed: value !== 0,
         isValid: true
@@ -122,9 +122,16 @@ function isValidInput(grid: Cell[][], row: number, col: number, value: string) {
 }
       
 function checkWin(grid: Cell[][], solution: Board) {
+    if (solution.length !== 9) return false;
+
     for (let r =0; r < 9; r++) {
-        for(let c = 0; c< 9; c++) {
-            const val = Number(grid[r][c].value);
+        for(let c = 0; c < 9; c++) {
+            const cellVal = grid[r][c].value;
+
+            if(cellVal === '') return false;
+
+            const val = Number(cellVal);
+
             if (val !== solution[r][c]) return false;
         }
     }
@@ -141,29 +148,35 @@ export default function SudokuGame() {
 
     const [time, setTime] = useState(0);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
-
+    const router = useRouter();
     const diff = Array.isArray(difficulty) ? difficulty[0] : difficulty;
 
 
     useEffect(() => {
-        const solved = generateSolvedBoard();
-        const puzzle = generatePuzzle((difficulty as string) );
+        const solvedBoard = generateSolvedBoard();
+        const puzzle = generatePuzzleFromSolution(solvedBoard.map(row => [...row]), diff || 'easy');
 
-        setSolution(solved);
+        setSolution(solvedBoard);
         setGrid(puzzle);
         setTime(0);
         setIsWon(false);
-    }, []);
+        setStarted(false);
+    }, [diff]);
 
     useEffect(() => {
-        if (started && !isWon) {
-            const interval = setInterval(() => {
-                setTime(t => t + 1 );
-            }, 1000)
-
-        return () => clearInterval(interval);
+        if (started && !isWon && !timerRef.current) {
+            timerRef.current = setInterval(() => {
+                setTime(t => t + 1);
+            }, 1000);
         }
-    }, [started, isWon])
+
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+                timerRef.current = null;
+            }
+        };
+    }, [started, isWon]);
 
     const formatTime =(t: number) => {
         const m = Math.floor(t/60);
@@ -178,13 +191,6 @@ export default function SudokuGame() {
 
             <Text>Difficulty: {diff}</Text>
             <Text>Time: {formatTime(time)}</Text>
-
-            {isWon && (
-                <View style={styles.winOverlay}>
-                    <Text style={styles.winSubText}>Congratulation, You Win!</Text>
-                    <Text style={styles.winSubText}>Time: {formatTime(time)}</Text>
-                </View>
-            )}
 
             <View style={styles.grid}>
                 {grid.map((row, i) => (
@@ -218,18 +224,48 @@ export default function SudokuGame() {
 
                                     setGrid(newGrid);
 
-                                    if (checkWin(newGrid, solution)) {
-                                        setIsWon(true);
-                                        setStarted(false);
-                                    }
-
-                                    if (!started) {
+                                    if (!started && text !== '') {
                                         setStarted(true);
                                         setTime(0);
                                     }
 
+                                    if (text !== '' && checkWin(newGrid, solution)) {
+                                        setIsWon(true);
+                                        setStarted(false);
+                                        
+
+                                        Alert.alert(
+                                        "🎉 You Win!",
+                                        `Time: ${formatTime(time)}`,
+                                        [
+                                            {
+                                                text: "New Game",
+                                                onPress: () => {
+                                                    const solvedBoard = generateSolvedBoard();
+                                                    const puzzle = generatePuzzleFromSolution(
+                                                        solvedBoard.map(row => [...row]),
+                                                        diff || 'easy'
+                                                    );
+
+                                                    setSolution(solvedBoard);
+                                                    setGrid(puzzle);
+                                                    setTime(0);
+                                                    setIsWon(false);
+                                                    setStarted(false);
+                                                }
+                                            },
+                                            {
+                                                text: "Quit",
+                                                onPress: () => router.replace("/Sudoku"),
+                                                style: "destructive"
+                                            }
+                                        ]
+                                    );
                                     }
                                 }
+  
+                                    }
+                                
                              />
                         ))}
                     </View>
