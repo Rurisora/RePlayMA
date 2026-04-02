@@ -1,9 +1,21 @@
-import { Text, View, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
 
-export default function Index() {
+export default function Home() {
+  const router = useRouter();
+
+  const goToGame = () => {
+    router.push("/Whack_a_mole" as any); // fix TS route error
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
+      <Text style={styles.title}>Home Screen</Text>
+
+      <Button
+        title="Go to Whack-a-Mole"
+        onPress={goToGame}
+      />
     </View>
   );
 }
@@ -11,7 +23,11 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 20,
   },
 });
