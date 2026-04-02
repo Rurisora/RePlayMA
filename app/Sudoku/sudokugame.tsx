@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { loadGame, saveGame } from '../../utils/sudokustorage';
 
 type Cell = {
     value: string;
@@ -139,29 +140,68 @@ function checkWin(grid: Cell[][], solution: Board) {
 }
 
 export default function SudokuGame() {
-    const {difficulty} = useLocalSearchParams();
+    const {difficulty, continue: continueParam} = useLocalSearchParams();
     
     const [grid, setGrid] = useState<Cell[][]>(([]));
     const [solution, setSolution] = useState<Board>([]);
     const [isWon, setIsWon] = useState(false);
     const [started, setStarted] = useState(false);
+    const latestGridRef = useRef<Cell[][]>([]);
 
     const [time, setTime] = useState(0);
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const router = useRouter();
     const diff = Array.isArray(difficulty) ? difficulty[0] : difficulty;
+    const isContinueGame = continueParam === 'true';
 
-
-    useEffect(() => {
+    const startNewGame = () => {
         const solvedBoard = generateSolvedBoard();
-        const puzzle = generatePuzzleFromSolution(solvedBoard.map(row => [...row]), diff || 'easy');
+        const puzzle = generatePuzzleFromSolution(
+            solvedBoard.map(row => [...row]),
+            diff || 'easy'
+        );
 
         setSolution(solvedBoard);
         setGrid(puzzle);
         setTime(0);
         setIsWon(false);
         setStarted(false);
-    }, [diff]);
+    }
+
+    useEffect(() => {
+        const resume = async () => {
+            if (isContinueGame) {
+                const saved = await loadGame();
+
+                if (saved) {
+                    setGrid(saved.grid);
+                    latestGridRef.current = saved.grid;
+                    setSolution(saved.solution);
+                    setTime(saved.time);
+                    setStarted(true);
+                    return;
+                } else {
+                    Alert.alert("No saved game found, starting new game.");
+                }
+            }
+            startNewGame();
+        };
+        resume();
+    }, []);
+
+    useEffect(() => {
+        latestGridRef.current = grid;
+    }, [grid]);
+
+    useEffect(() => {
+        if (isWon && started) {
+            saveGame({
+                grid: latestGridRef.current,
+                solution: solution.map(r => [...r]),
+                time,
+                difficulty: diff || 'easy',
+            })
+    }}, [grid, time, started]);
 
     useEffect(() => {
         if (started && !isWon && !timerRef.current) {
@@ -223,6 +263,7 @@ export default function SudokuGame() {
                                     newGrid[i][j].isValid = valid || text === '';
 
                                     setGrid(newGrid);
+                                    latestGridRef.current = newGrid;
 
                                     if (!started && text !== '') {
                                         setStarted(true);
@@ -235,41 +276,58 @@ export default function SudokuGame() {
                                         
 
                                         Alert.alert(
-                                        "🎉 You Win!",
-                                        `Time: ${formatTime(time)}`,
-                                        [
-                                            {
-                                                text: "New Game",
-                                                onPress: () => {
-                                                    const solvedBoard = generateSolvedBoard();
-                                                    const puzzle = generatePuzzleFromSolution(
-                                                        solvedBoard.map(row => [...row]),
-                                                        diff || 'easy'
-                                                    );
-
-                                                    setSolution(solvedBoard);
-                                                    setGrid(puzzle);
-                                                    setTime(0);
-                                                    setIsWon(false);
-                                                    setStarted(false);
+                                            "🎉 You Win!",
+                                            `Time: ${formatTime(time)}`,
+                                            [
+                                                {
+                                                    text: "New Game",
+                                                    onPress: startNewGame
+                                                },
+                                                {
+                                                    text: "Quit",
+                                                    onPress: async () => {
+                                                        await saveGame({
+                                                            grid: latestGridRef.current,
+                                                            solution: solution.map(r => [...r]),
+                                                            time,
+                                                            difficulty: diff || 'easy',
+                                                        });
+                                                        router.replace("/Sudoku");
+                                                    },
+                                                    style: "destructive"
                                                 }
-                                            },
-                                            {
-                                                text: "Quit",
-                                                onPress: () => router.replace("/Sudoku"),
-                                                style: "destructive"
-                                            }
-                                        ]
-                                    );
+                                            ]
+                                        );
+                                        }
                                     }
-                                }
   
-                                    }
+                                }
                                 
                              />
                         ))}
                     </View>
                 ))}
+            </View>
+            <View style={styles.buttonContainer}>
+                <View style={styles.button}>
+                    <Button title="New Game" onPress={startNewGame} />
+                </View>
+
+                <View style={styles.button}>
+                    <Button 
+                        title="Quit" 
+                        color="red"
+                        onPress={async () => {
+                            await saveGame({
+                                grid: latestGridRef.current,
+                                solution: solution.map(r => [...r]),
+                                time,
+                                difficulty: diff || 'easy',
+                            });
+                            router.replace("/Sudoku");
+                        }}
+                    />
+                </View>
             </View>
         </View>
     )
@@ -322,5 +380,11 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         color: 'green',
+    },
+    buttonContainer: {
+
+    },
+    button: {
+
     },
 });

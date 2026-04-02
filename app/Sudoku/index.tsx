@@ -36,7 +36,7 @@ export default function SudokuGame() {
                     </Pressable>
                 ))}
             </View>
-            <Button title="Back To Home" onPress={() => router.back()}/>
+            <Button title="Back To Home" onPress={() => router.push("/")}/>
         </View> 
     )
 }
