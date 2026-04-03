@@ -9,9 +9,9 @@ export default function Home() {
             <Text>Home Page</Text>
 
             <Button title="Sudoku" onPress={() => router.push("/Sudoku")}/>
-            <Button title="Chess" onPress={() => {}}/>
-            <Button title="Checker" onPress={() => {}}/>
-            <Button title="Whack-a-Mole" onPress={() => {}}/>
+            <Button title="Chess" onPress={() => router.push("/Chess")}/>
+            <Button title="Checker" onPress={() => router.push("/Checker")}/>
+            <Button title="Whack-a-Mole" onPress={() => router.push("/WhackAMole")}/>
         </View>
     )
 }
