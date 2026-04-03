@@ -11,7 +11,7 @@ export default function Home() {
             <Button title="Sudoku" onPress={() => router.push("/Sudoku")}/>
             <Button title="Chess" onPress={() => {}}/>
             <Button title="Checker" onPress={() => {}}/>
-            <Button title="Whack-a-Mole" onPress={() => {}}/>
+            <Button title="Whack-a-Mole" onPress={() => router.push("/WhackAMole")}/>
         </View>
     )
 }
