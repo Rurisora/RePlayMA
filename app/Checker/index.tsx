@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
 import React from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { createNewGameState } from "../../utils/checkerLogic";
 import { loadCheckerGame, saveCheckerGame } from "../../utils/checkerStorage";
-import { createNewGameState } from "./checkerLogic";
 
 export default function CheckerMenuScreen() {
   const router = useRouter();

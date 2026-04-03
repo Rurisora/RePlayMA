@@ -18,4 +18,17 @@ export type CheckerGameState = {
   board: Board;
   currentPlayer: PieceColor;
   elapsedSeconds: number;
+  winner: PieceColor | null;
+};
+
+export type Position = {
+  row: number;
+  col: number;
+};
+
+export type Move = {
+  row: number;
+  col: number;
+  isJump: boolean;
+  jumpedPiece?: Position;
 };

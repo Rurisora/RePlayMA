@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { CheckerGameState } from "../app/Checker/checkerTypes";
+import { CheckerGameState } from "./checkerTypes";
 
 const CHECKER_GAME_KEY = "checker_game_state";
 

@@ -1,17 +1,26 @@
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import {
-    loadCheckerGame,
-    saveCheckerGame
-} from "../../utils/checkerStorage";
-import { createNewGameState, formatTime } from "./checkerLogic";
-import { CheckerGameState, Square } from "./checkerTypes";
+    createNewGameState,
+    formatTime,
+    getAllowedMovesForPiece,
+    getJumpMoves,
+    getNextPlayer,
+    getWinner,
+    movePiece,
+} from "../../utils/checkerLogic";
+import { loadCheckerGame, saveCheckerGame } from "../../utils/checkerStorage";
+import { CheckerGameState, Move, Position, Square } from "../../utils/checkerTypes";
 
 export default function CheckerGameScreen() {
   const router = useRouter();
   const [gameState, setGameState] = useState<CheckerGameState>(createNewGameState());
   const [loading, setLoading] = useState(true);
+  const [selectedPiece, setSelectedPiece] = useState<Position | null>(null);
+  const [validMoves, setValidMoves] = useState<Move[]>([]);
+  const [mustContinueJump, setMustContinueJump] = useState(false);
+  const [showWinnerModal, setShowWinnerModal] = useState(false);
 
   useEffect(() => {
     const loadGame = async () => {
@@ -32,7 +41,7 @@ export default function CheckerGameScreen() {
   }, []);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || gameState.winner) return;
 
     const timer = setInterval(() => {
       setGameState((prev) => ({
@@ -42,27 +51,112 @@ export default function CheckerGameScreen() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [loading]);
+  }, [loading, gameState.winner]);
 
   useEffect(() => {
     if (loading) return;
     saveCheckerGame(gameState);
   }, [gameState, loading]);
 
+  useEffect(() => {
+    if (gameState.winner) {
+      setShowWinnerModal(true);
+    }
+  }, [gameState.winner]);
+
+  const resetSelection = () => {
+    setSelectedPiece(null);
+    setValidMoves([]);
+    setMustContinueJump(false);
+  };
+
   const handleSquarePress = (square: Square) => {
-    console.log("Pressed:", square.row, square.col, square.piece);
+    if (loading || gameState.winner) return;
+
+    const tappedMove = validMoves.find(
+      (move) => move.row === square.row && move.col === square.col,
+    );
+
+    if (selectedPiece && tappedMove) {
+      const updatedBoard = movePiece(gameState.board, selectedPiece, tappedMove);
+
+      if (tappedMove.isJump) {
+        const nextPosition = { row: tappedMove.row, col: tappedMove.col };
+        const nextJumpMoves = getJumpMoves(updatedBoard, nextPosition);
+
+        if (nextJumpMoves.length > 0) {
+          setGameState((prev) => {
+            const winner = getWinner(updatedBoard);
+
+            return {
+              ...prev,
+              board: updatedBoard,
+              winner,
+            };
+          });
+
+          setSelectedPiece(nextPosition);
+          setValidMoves(nextJumpMoves);
+          setMustContinueJump(true);
+          return;
+        }
+      }
+
+      setGameState((prev) => {
+        const nextPlayer = getNextPlayer(prev.currentPlayer);
+        const winner = getWinner(updatedBoard);
+
+        return {
+          ...prev,
+          board: updatedBoard,
+          currentPlayer: nextPlayer,
+          winner,
+        };
+      });
+
+      resetSelection();
+      return;
+    }
+
+    if (mustContinueJump) {
+      return;
+    }
+
+    if (square.piece && square.piece.color === gameState.currentPlayer) {
+      const piecePosition = { row: square.row, col: square.col };
+      const allowedMoves = getAllowedMovesForPiece(
+        gameState.board,
+        piecePosition,
+        gameState.currentPlayer,
+      );
+
+      setSelectedPiece(piecePosition);
+      setValidMoves(allowedMoves);
+      return;
+    }
+
+    resetSelection();
   };
 
   const handleNewGame = async () => {
     const newGame = createNewGameState();
     setGameState(newGame);
+    resetSelection();
+    setShowWinnerModal(false);
     await saveCheckerGame(newGame);
   };
 
   const handleQuit = async () => {
     await saveCheckerGame(gameState);
+    setShowWinnerModal(false);
     router.back();
   };
+
+  const isSelected = (row: number, col: number) =>
+    selectedPiece?.row === row && selectedPiece?.col === col;
+
+  const isValidMoveSquare = (row: number, col: number) =>
+    validMoves.some((move) => move.row === row && move.col === col);
 
   if (loading) {
     return (
@@ -75,8 +169,16 @@ export default function CheckerGameScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Checkers Game</Text>
-      <Text style={styles.infoText}>Turn: {gameState.currentPlayer.toUpperCase()}</Text>
+      <Text style={styles.infoText}>
+        {gameState.winner
+          ? `Winner: ${gameState.winner.toUpperCase()}`
+          : `Turn: ${gameState.currentPlayer.toUpperCase()}`}
+      </Text>
       <Text style={styles.infoText}>Time: {formatTime(gameState.elapsedSeconds)}</Text>
+
+      {mustContinueJump && !gameState.winner && (
+        <Text style={styles.warningText}>You must continue jumping.</Text>
+      )}
 
       <View style={styles.board}>
         {gameState.board.map((row, rowIndex) => (
@@ -87,6 +189,8 @@ export default function CheckerGameScreen() {
                 style={[
                   styles.square,
                   square.isDark ? styles.darkSquare : styles.lightSquare,
+                  isSelected(square.row, square.col) && styles.selectedSquare,
+                  isValidMoveSquare(square.row, square.col) && styles.validMoveSquare,
                 ]}
                 onPress={() => handleSquarePress(square)}
               >
@@ -102,6 +206,10 @@ export default function CheckerGameScreen() {
                     {square.piece.king && <Text style={styles.kingText}>K</Text>}
                   </View>
                 )}
+
+                {!square.piece && isValidMoveSquare(square.row, square.col) && (
+                  <View style={styles.moveDot} />
+                )}
               </Pressable>
             ))}
           </View>
@@ -115,6 +223,30 @@ export default function CheckerGameScreen() {
       <Pressable style={styles.redButton} onPress={handleQuit}>
         <Text style={styles.buttonText}>QUIT</Text>
       </Pressable>
+
+      <Modal
+        visible={showWinnerModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowWinnerModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Game Over</Text>
+            <Text style={styles.modalText}>
+              {gameState.winner?.toUpperCase()} wins!
+            </Text>
+
+            <Pressable style={styles.modalBlueButton} onPress={handleNewGame}>
+              <Text style={styles.buttonText}>NEW GAME</Text>
+            </Pressable>
+
+            <Pressable style={styles.modalRedButton} onPress={handleQuit}>
+              <Text style={styles.buttonText}>QUIT</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -137,6 +269,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#222",
     marginBottom: 2,
+  },
+  warningText: {
+    fontSize: 14,
+    color: "#b00020",
+    fontWeight: "600",
+    marginBottom: 8,
   },
   board: {
     width: 320,
@@ -162,6 +300,18 @@ const styles = StyleSheet.create({
   },
   darkSquare: {
     backgroundColor: "#7d7d7d",
+  },
+  selectedSquare: {
+    backgroundColor: "#ffd54f",
+  },
+  validMoveSquare: {
+    backgroundColor: "#bde7ff",
+  },
+  moveDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: "#1d8fff",
   },
   piece: {
     width: 28,
@@ -204,5 +354,49 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "600",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  modalCard: {
+    width: 280,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 8,
+    padding: 20,
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#222",
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#111",
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 18,
+    color: "#222",
+    marginBottom: 20,
+  },
+  modalBlueButton: {
+    backgroundColor: "#2ea3ff",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    minWidth: 140,
+    alignItems: "center",
+    marginBottom: 10,
+    borderRadius: 2,
+  },
+  modalRedButton: {
+    backgroundColor: "#ff1616",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    minWidth: 140,
+    alignItems: "center",
+    borderRadius: 2,
   },
 });
