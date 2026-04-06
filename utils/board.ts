@@ -1,4 +1,4 @@
-import { Piece } from "../types/chess";
+import { Piece } from "./chessTypes";
 
 export const createInitialBoard = (): (Piece | null)[][] => {
   const emptyRow = Array(8).fill(null);

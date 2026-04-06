@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
-import { Piece } from "../types/chess";
+import { Piece } from "../../utils/chessTypes";
 import PieceComponent from "./piece";
 
 interface Props {
