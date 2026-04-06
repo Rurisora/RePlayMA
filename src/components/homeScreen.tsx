@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { COLORS } from "../../utils/colors";
 import AppButton from "../components/appButton";
-import BottomNav from "../components/bottomNav";
 import ChessBoard from "../components/chessBoard";
 
 export default function HomeScreen({ navigation }: any) {
@@ -27,8 +26,6 @@ export default function HomeScreen({ navigation }: any) {
           <Text>Sudoku</Text>
         </View>
       </View>
-
-      <BottomNav />
     </View>
   );
 }

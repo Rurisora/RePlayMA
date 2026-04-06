@@ -4,7 +4,6 @@ export const createInitialBoard = (): (Piece | null)[][] => {
   const emptyRow = Array(8).fill(null);
 
   return [
-    // Black pieces
     [
       { type: "rook", color: "black" },
       { type: "knight", color: "black" },

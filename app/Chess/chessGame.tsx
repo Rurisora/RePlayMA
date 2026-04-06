@@ -6,8 +6,6 @@ import { createNewGameState, movePiece } from "../../utils/chessLogic";
 import { loadChessGame, saveChessGame } from "../../utils/chessStorage";
 import { ChessGameState, Move, Position } from "../../utils/chessTypes";
 
-/* ================= SAFE MOVE LOGIC ================= */
-
 const getMoves = (board: any[][], pos: Position): Move[] => {
   const square = board[pos.row]?.[pos.col];
   if (!square || !square.piece) return [];
@@ -86,8 +84,6 @@ const getMoves = (board: any[][], pos: Position): Move[] => {
   return moves;
 };
 
-/* ================= SAFE WIN CHECK ================= */
-
 const getWinner = (board: any[][]) => {
   let whiteKing = false;
   let blackKing = false;
@@ -105,8 +101,6 @@ const getWinner = (board: any[][]) => {
   if (!blackKing) return "white";
   return null;
 };
-
-/* ================= SYMBOLS ================= */
 
 const symbols: any = {
   white: {
@@ -179,7 +173,6 @@ export default function ChessGameScreen() {
       (m) => m.row === square.row && m.col === square.col,
     );
 
-    /* ===== MOVE ===== */
     if (selectedPiece && tappedMove) {
       setIsProcessingMove(true);
 
@@ -210,7 +203,6 @@ export default function ChessGameScreen() {
       return;
     }
 
-    /* ===== SELECT ===== */
     if (!square?.piece) return;
     if (square.piece.color !== gameState.currentPlayer) return;
 
@@ -311,8 +303,6 @@ export default function ChessGameScreen() {
     </View>
   );
 }
-
-/* ================= STYLES ================= */
 
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: "center", justifyContent: "center" },

@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { COLORS } from "../../utils/colors";
 import AppButton from "../components/appButton";
-import BottomNav from "../components/bottomNav";
 import ChessBoard from "../components/chessBoard";
 
 export default function GameScreen() {
@@ -18,8 +17,6 @@ export default function GameScreen() {
 
       <AppButton title="New Game" onPress={() => {}} />
       <AppButton title="Quit" onPress={() => {}} />
-
-      <BottomNav />
     </View>
   );
 }
