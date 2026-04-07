@@ -1,21 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Animated,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+
+import { Audio } from "expo-av";
+import { JSX } from "react/jsx-runtime";
 
 const GRID_SIZE = 9;
+
+// ADDED: winning condition
+const WIN_SCORE = 50;
 
 export default function Index(): JSX.Element {
   const [moleIndex, setMoleIndex] = useState<number | null>(null);
   const [score, setScore] = useState<number>(0);
   const [timeLeft, setTimeLeft] = useState<number>(60);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const scaleAnim = useState(new Animated.Value(0))[0];
+
+   // CHANGED: better animation handling
+  const scaleAnim = useRef(new Animated.Value(0)).current;
+  // const scaleAnim = useState(new Animated.Value(0))[0];
 
   const [hammer, setHammer] = useState<{
     x: number;
@@ -24,15 +34,30 @@ export default function Index(): JSX.Element {
   } | null>(null);
 
   // ADDED: control speed
-  const SPAWN_SPEED = 800; // faster mole spawn
-  const MOLE_DURATION = 700; // how long mole stays
+  const SPAWN_SPEED = 1000; // faster mole spawn
+  const MOLE_DURATION = 800; // how long mole stays
 
-  // CHANGED: Move mole faster + allow replacement
+  // ADDED: play sound helper
+  const playSound = async (soundFile: any) => {
+    const { sound } = await Audio.Sound.createAsync(soundFile);
+    await sound.playAsync();
+
+    // auto cleanup
+    sound.setOnPlaybackStatusUpdate((status) => {
+      if ((status as any).didJustFinish) {
+        sound.unloadAsync();
+      }
+    });
+  };
+
+   // CHANGED: use timeout loop instead of interval
   useEffect(() => {
     if (!isPlaying) return;
 
-    const interval = setInterval(() => {
-      const random = Math.floor(Math.random() * GRID_SIZE); // CHANGED (removed blocking condition)
+    let timeout: ReturnType<typeof setTimeout>;
+
+    const spawnMole = () => {
+      const random = Math.floor(Math.random() * GRID_SIZE);
       setMoleIndex(random);
 
       scaleAnim.setValue(0);
@@ -42,12 +67,16 @@ export default function Index(): JSX.Element {
         useNativeDriver: true,
         friction: 4,
       }).start();
-    }, SPAWN_SPEED); // CHANGED (was 800)
 
-    return () => clearInterval(interval);
+      timeout = setTimeout(spawnMole, SPAWN_SPEED);
+    };
+
+    spawnMole();
+
+    return () => clearTimeout(timeout);
   }, [isPlaying]);
 
-  // ADDED: auto-hide mole if not hit
+  // Auto-hide mole
   useEffect(() => {
     if (moleIndex === null) return;
 
@@ -58,25 +87,90 @@ export default function Index(): JSX.Element {
     return () => clearTimeout(timeout);
   }, [moleIndex]);
 
-  // CHANGED: safer timer
+  // Timer
   useEffect(() => {
     if (!isPlaying || timeLeft <= 0) return;
 
     const timer = setTimeout(() => {
-      setTimeLeft((prev) => Math.max(prev - 1, 0)); // CHANGED
+      setTimeLeft((prev) => Math.max(prev - 1, 0));
     }, 1000);
 
     return () => clearTimeout(timer);
   }, [timeLeft, isPlaying]);
 
-  // Game over
+  // ADDED: WIN CONDITION
   useEffect(() => {
-    if (timeLeft === 0) {
+    if (score >= WIN_SCORE && isPlaying) {
       setIsPlaying(false);
       setMoleIndex(null);
+
+      playSound(require("./sounds/win.wav")); // ADDED
+      alert(`🎉 You Win! Final score: ${score}`);
+    }
+  }, [score, isPlaying]);
+
+  // CHANGED: Game Over only if NOT won
+  useEffect(() => {
+    if (timeLeft === 0 && score < WIN_SCORE) {
+      setIsPlaying(false);
+      setMoleIndex(null);
+
+      playSound(require("./sounds/game_over.wav")); // ADDED
       alert(`Game Over! Your score: ${score}`);
     }
   }, [timeLeft, score]);
+
+
+  // CHANGED: Move mole faster + allow replacement
+  // useEffect(() => {
+    // if (!isPlaying) return;
+
+    // const interval = setInterval(() => {
+    //   const random = Math.floor(Math.random() * GRID_SIZE); // CHANGED (removed blocking condition)
+    //   setMoleIndex(random);
+
+    //   scaleAnim.setValue(0);
+
+    //   Animated.spring(scaleAnim, {
+    //     toValue: 1.3,
+    //     useNativeDriver: true,
+    //     friction: 4,
+    //   }).start();
+    // }, SPAWN_SPEED); // CHANGED (was 800)
+
+  //   return () => clearInterval(interval);
+  // }, [isPlaying]);
+
+  // ADDED: auto-hide mole if not hit
+  // useEffect(() => {
+  //   if (moleIndex === null) return;
+
+  //   const timeout = setTimeout(() => {
+  //     setMoleIndex(null);
+  //   }, MOLE_DURATION);
+
+  //   return () => clearTimeout(timeout);
+  // }, [moleIndex]);
+
+  // // CHANGED: safer timer
+  // useEffect(() => {
+  //   if (!isPlaying || timeLeft <= 0) return;
+
+  //   const timer = setTimeout(() => {
+  //     setTimeLeft((prev) => Math.max(prev - 1, 0)); // CHANGED
+  //   }, 1000);
+
+  //   return () => clearTimeout(timer);
+  // }, [timeLeft, isPlaying]);
+
+  // // Game over
+  // useEffect(() => {
+  //   if (timeLeft === 0) {
+  //     setIsPlaying(false);
+  //     setMoleIndex(null);
+  //     alert(`Game Over! Your score: ${score}`);
+  //   }
+  // }, [timeLeft, score]);
 
   const handlePress = (index: number, event: any): void => {
     if (!isPlaying) return;
@@ -86,6 +180,7 @@ export default function Index(): JSX.Element {
     setHammer({ x: locationX, y: locationY, index });
 
     if (index === moleIndex) {
+      playSound(require("./sounds/hit.wav")); // ADDED
       Animated.sequence([
         Animated.timing(scaleAnim, {
           toValue: 0.6,
@@ -114,9 +209,14 @@ export default function Index(): JSX.Element {
     setIsPlaying(true);
   };
 
+  const router = useRouter();
   const quitGame = (): void => {
     setIsPlaying(false);
     setMoleIndex(null);
+    setTimeLeft(60); // ADDED
+    setScore(0);     // ADDED
+
+    router.push("/"); // Navigate back to home
   };
 
   const formatTime = (): string => {
@@ -125,10 +225,14 @@ export default function Index(): JSX.Element {
     return `${m}m ${s}s`;
   };
 
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Whack a mole</Text>
       <Text style={styles.subtitle}>Enjoy your games</Text>
+
+        {/* ADDED: show target */}
+      <Text style={styles.info}>Target: {WIN_SCORE}</Text>
 
         {/* CHANGED */}
       <Text style={styles.info}>Difficulty: Normal</Text> 
