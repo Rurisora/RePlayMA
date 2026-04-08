@@ -38,7 +38,6 @@ export default function GameHomePageIndex() {
               <Image source={game.image} style={styles.fullImage} />
               <View style={styles.recentOverlay}>
                 <Text style={styles.recentName}>{game.name}</Text>
-                <Text style={styles.recentTime}>Time: 10m20s</Text>
               </View>
             </TouchableOpacity>
           ))}
