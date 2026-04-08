@@ -21,11 +21,6 @@ export type ChessGameState = {
   winner: Color | null;
 };
 
-export interface Square {
-  file: string; // a-h
-  rank: number; // 1-8
-}
-
 export type Position = {
   row: number;
   col: number;
@@ -36,4 +31,11 @@ export type Move = {
   col: number;
   isJump: boolean;
   jumpedPiece?: Position;
+};
+
+export type Square = {
+  row: number;
+  col: number;
+  piece: Piece | null;
+  isDark: boolean;
 };

@@ -14,42 +14,32 @@ export default function ChessBoard() {
   const handlePress = (row: number, col: number) => {
     const square = board[row][col];
 
-    /* ================= SECOND CLICK (MOVE) ================= */
     if (selected) {
       const [fromRow, fromCol] = selected;
       const selectedPiece = board[fromRow][fromCol];
 
-      // ❌ No piece selected
       if (!selectedPiece) {
         setSelected(null);
         return;
       }
 
-      // ❌ Prevent capturing own piece
       if (square && square.color === selectedPiece.color) {
         return;
       }
 
-      // ✅ Move piece
       const newBoard = movePiece(board, selected, [row, col]);
       setBoard(newBoard);
 
-      // 🔄 Switch turn
       setCurrentPlayer((prev) => (prev === "white" ? "black" : "white"));
 
       setSelected(null);
       return;
     }
 
-    /* ================= FIRST CLICK (SELECT) ================= */
-
-    // ❌ Empty square
     if (!square) return;
 
-    // ❌ Not your turn
     if (square.color !== currentPlayer) return;
 
-    // ✅ Select piece
     setSelected([row, col]);
   };
 

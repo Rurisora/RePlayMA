@@ -14,8 +14,6 @@ export const movePiece = (
 
 import { StyleSheet } from "react-native";
 
-/* ================= TYPES ================= */
-
 type PieceColor = "white" | "black";
 type PieceType = "pawn" | "rook" | "knight" | "bishop" | "queen" | "king";
 
@@ -52,7 +50,6 @@ export function createInitialBoard(): Board {
       const isDark = (row + col) % 2 === 1;
       let piece: Piece | null = null;
 
-      // 🔵 Black pieces (top)
       if (row === 0) {
         piece = {
           type: backRow[col],
@@ -63,10 +60,7 @@ export function createInitialBoard(): Board {
           type: "pawn",
           color: "black",
         };
-      }
-
-      // ⚪ White pieces (bottom)
-      else if (row === 6) {
+      } else if (row === 6) {
         piece = {
           type: "pawn",
           color: "white",
@@ -117,8 +111,6 @@ type ChessGameState = {
   winner: PieceColor | null;
 };
 
-/* ================= INITIAL BOARD ================= */
-
 function createBoard(): Board {
   const board: Board = [];
   const back = [
@@ -157,8 +149,6 @@ function createBoard(): Board {
   return board;
 }
 
-/* ================= UTIL ================= */
-
 function cloneBoard(board: Board): Board {
   return board.map((row) =>
     row.map((s) => ({
@@ -167,8 +157,6 @@ function cloneBoard(board: Board): Board {
     })),
   );
 }
-
-/* ================= MOVE LOGIC ================= */
 
 function getPawnMoves(board: Board, pos: Position, piece: Piece): Move[] {
   const moves: Move[] = [];
@@ -262,14 +250,10 @@ function getMoves(board: Board, pos: Position): Move[] {
   return [];
 }
 
-/* ================= UI ================= */
-
 const symbols: any = {
   white: { pawn: "♙", rook: "♖", knight: "♘" },
   black: { pawn: "♟", rook: "♜", knight: "♞" },
 };
-
-/* ================= STYLES ================= */
 
 const styles = StyleSheet.create({
   container: {
