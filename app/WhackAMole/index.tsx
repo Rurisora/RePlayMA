@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef } from "react";
+import { useRouter } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   StyleSheet,
@@ -7,7 +8,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
 
 // import { Audio } from "expo-av";
 import { JSX } from "react/jsx-runtime";
@@ -235,7 +235,7 @@ export default function Index(): JSX.Element {
       <Text style={styles.info}>Target: {WIN_SCORE}</Text>
 
         {/* CHANGED */}
-      <Text style={styles.info}>Difficulty: Normal</Text> 
+      {/* <Text style={styles.info}>Difficulty: Normal</Text>  */}
       <Text style={styles.info}>Time: {formatTime()}</Text>
       <Text style={styles.score}>Score: {score}</Text>
 
