@@ -15,7 +15,7 @@ import { JSX } from "react/jsx-runtime";
 const GRID_SIZE = 9;
 
 // ADDED: winning condition
-const WIN_SCORE = 50;
+const WIN_SCORE = 100;
 
 export default function Index(): JSX.Element {
   const [moleIndex, setMoleIndex] = useState<number | null>(null);
