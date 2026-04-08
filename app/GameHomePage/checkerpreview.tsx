@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import {
   Image,
@@ -16,7 +17,7 @@ export default function CheckerPreview() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>←</Text>
+          <Ionicons name="arrow-back-sharp" size={38} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Checkers for Thinker</Text>
         <Text style={styles.headerSubtitle}>Enjoy your games</Text>

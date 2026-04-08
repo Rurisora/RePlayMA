@@ -8,7 +8,7 @@ const CARD_SIZE = (width - (20 * 2 + 15)) / 2;
 
 const GAMES = [
   { id: 'checker', name: 'Checker', image: require('../../assets/images/games/checker.png'), route: '/GameHomePage/checkerpreview' },
-  { id: 'sudoku_n', name: 'Sudoku: Normal', image: require('../../assets/images/games/sudoku.png'), route: '/GameHomePage/sudokupreview' },
+  { id: 'sudoku_n', name: 'Sudoku', image: require('../../assets/images/games/sudoku.png'), route: '/GameHomePage/sudokupreview' },
   { id: 'chess', name: 'Chess', image: require('../../assets/images/games/chess.png'), route: '/GameHomePage/chesspreview' },
   { id: 'whackamole', name: 'Whack-a-mole', image: require('../../assets/images/games/whackamole.png'), route: '/GameHomePage/whackamole' },
 ];
