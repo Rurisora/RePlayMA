@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   quitButton: {
-    backgroundColor: "#999",
+    backgroundColor: "#6c8cd5",
   },
   buttonText: {
     color: "#fff",
