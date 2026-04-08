@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { loadGame, saveGame } from '../../utils/sudokustorage';
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { loadGame, saveBestTime, saveGame } from '../../utils/sudokustorage';
 
 type Cell = {
     value: string;
@@ -240,7 +240,13 @@ export default function SudokuGame() {
                                 key={j}
                                 style={[styles.cell,
                                     cell.fixed && styles.fixedCell,
-                                    cell.isValid === false && styles.invalidCell]
+                                    cell.isValid === false && styles.invalidCell,
+                                    {
+                                        borderTopWidth: i % 3 === 0 ? 2 : 1, 
+                                        borderLeftWidth: j % 3 === 0 ? 2 : 1, 
+                                        borderColor: 'black',
+                                    }
+                                ]
                                 }
                                 value={cell.value}
                                 editable={!cell.fixed && !isWon}
@@ -274,6 +280,9 @@ export default function SudokuGame() {
                                         setIsWon(true);
                                         setStarted(false);
                                         
+                                        const finalTime = time;
+
+                                        saveBestTime(finalTime, diff || 'easy');
 
                                         Alert.alert(
                                             "🎉 You Win!",
@@ -309,14 +318,14 @@ export default function SudokuGame() {
                 ))}
             </View>
             <View style={styles.buttonContainer}>
-                <View style={styles.button}>
-                    <Button title="New Game" onPress={startNewGame} />
+                <View>
+                    <Pressable style={styles.button} onPress={startNewGame}>
+                        <Text style={styles.buttonText}>New Game</Text>
+                    </Pressable>
                 </View>
 
-                <View style={styles.button}>
-                    <Button 
-                        title="Quit" 
-                        color="red"
+                <View>
+                    <Pressable style={[styles.button, styles.quitButton]}
                         onPress={async () => {
                             await saveGame({
                                 grid: latestGridRef.current,
@@ -326,7 +335,9 @@ export default function SudokuGame() {
                             });
                             router.replace("/Sudoku");
                         }}
-                    />
+                    >
+                        <Text style={styles.buttonText}> Quit</Text>
+                    </Pressable>
                 </View>
             </View>
         </View>
@@ -353,11 +364,11 @@ const styles = StyleSheet.create({
     cell: {
         width: 35,
         height: 35,
-        borderWidth: 1,
+        borderWidth: 0.5,
         borderColor: 'black',
-        alignItems: 'center',
-        justifyContent: 'center',
-        lineHeight: 15,
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        lineHeight: 12,
     },
     fixedCell: {
         backgroundColor: '#ddd',
@@ -385,6 +396,18 @@ const styles = StyleSheet.create({
 
     },
     button: {
-
+        width: 200,
+        padding: 12,
+        backgroundColor: "#6c8cd5",
+        borderRadius: 10,
+        marginVertical: 5,
+        alignItems: "center",        
+    },
+    buttonText: {
+        color: "#fff",
+        fontWeight: "bold",
+    },
+    quitButton: {
+        backgroundColor: "#6c8cd5",
     },
 });
