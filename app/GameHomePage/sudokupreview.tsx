@@ -33,13 +33,9 @@ export default function SudokuPreview() {
       </View>
 
       {/* Info */}
-      <View style={styles.infoRow}>
-        <View style={styles.infoBadge}>
-          <Text style={styles.infoBadgeText}>Player Count:</Text>
-        </View>
-        <View style={styles.infoBadge}>
-          <Text style={styles.infoBadgeText}>• 1 Players</Text>
-        </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Player Count:</Text>
+        <Text style={styles.infoBadgeText}>• 1 Player</Text>
       </View>
 
       {/* Description */}
