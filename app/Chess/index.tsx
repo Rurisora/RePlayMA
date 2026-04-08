@@ -59,13 +59,12 @@ const styles = StyleSheet.create({
     color: "#222",
   },
   blueButton: {
-    backgroundColor: "#2ea3ff",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    minWidth: 140,
+    backgroundColor: "#6c8cd5",
+    padding: 12,
+    width: 200,
     alignItems: "center",
     marginVertical: 6,
-    borderRadius: 2,
+    borderRadius: 10,
     elevation: 3,
   },
   buttonText: {

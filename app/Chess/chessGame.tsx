@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { createNewGameState } from "../../utils/chessLogic";
-import { saveChessGame } from "../../utils/chessStorage";
+import { loadChessGame, saveChessGame } from "../../utils/chessStorage";
 import { ChessGameState, Square } from "../../utils/chessTypes";
 
 // Types
@@ -297,10 +297,11 @@ const getLegalMoves = (
   });
 };
 export default function ChessGameScreen() {
-  const [gameState, setGameState] = useState<GameState>({
+  const [gameState, setGameState] = useState<ChessGameState>({
     board: createBoard(),
     currentPlayer: "white",
     winner: null,
+    elapsedSeconds: 0,
   });
 
   const [selected, setSelected] = useState<Position | null>(null);
@@ -338,6 +339,7 @@ export default function ChessGameScreen() {
         board: newBoard,
         currentPlayer: gameState.currentPlayer === "white" ? "black" : "white",
         winner,
+        elapsedSeconds: gameState.elapsedSeconds,
       });
 
       setSelected(null);
@@ -356,6 +358,7 @@ export default function ChessGameScreen() {
       board: createBoard(),
       currentPlayer: "white",
       winner: null,
+      elapsedSeconds: gameState.elapsedSeconds,
     });
     setSelected(null);
     setMoves([]);
@@ -365,7 +368,7 @@ export default function ChessGameScreen() {
     await saveChessGame(gameState);
     setShowWinnerModal(false);
 
-    router.replace("/");
+    router.back();
   };
 
   const handleNewGame = async () => {
@@ -389,9 +392,32 @@ export default function ChessGameScreen() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const loadGame = async () => {
+      const savedGame = await loadChessGame();
+
+      if (savedGame) {
+        setGameState(savedGame);
+      } else {
+        const newGame: ChessGameState = {
+          board: createBoard(),
+          currentPlayer: "white",
+          winner: null,
+          elapsedSeconds: 0,
+        };
+        setGameState(newGame);
+        await saveChessGame(newGame);
+      }
+
+      setLoading(false);
+    };
+
+    loadGame();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>♟ Chess for Thinker</Text>
+      <Text style={styles.title}>♟ Welcome to Chess World</Text>
 
       <Text style={styles.info}>
         {gameState.winner
