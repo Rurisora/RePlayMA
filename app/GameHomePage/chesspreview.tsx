@@ -35,7 +35,10 @@ export default function ChessPreview() {
       {/* Info */}
       <View style={styles.infoRow}>
         <View style={styles.infoBadge}>
-          <Text style={styles.infoBadgeText}>2 Players</Text>
+          <Text style={styles.infoBadgeText}>Player Count:</Text>
+        </View>
+        <View style={styles.infoBadge}>
+          <Text style={styles.infoBadgeText}>• 2 Players</Text>
         </View>
       </View>
 
@@ -51,6 +54,8 @@ export default function ChessPreview() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>How to Play</Text>
+        <Text style={styles.sectionText}>• Two players </Text>
+        <Text style={styles.sectionText}>• White vs. Black command 16 unique pieces each</Text>
         <Text style={styles.sectionText}>• Put the opponent's King in checkmate to win</Text>
         <Text style={styles.sectionText}>• Special moves: castling, en passant, promotion</Text>
       </View>
@@ -117,7 +122,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   infoRow: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     gap: 10,
     paddingHorizontal: 20,
     paddingVertical: 16,

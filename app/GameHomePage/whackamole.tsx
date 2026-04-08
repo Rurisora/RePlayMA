@@ -35,7 +35,10 @@ export default function WhackAMolePreview() {
       {/* Info */}
       <View style={styles.infoRow}>
         <View style={styles.infoBadge}>
-          <Text style={styles.infoBadgeText}>Solo</Text>
+          <Text style={styles.infoBadgeText}>Player Count:</Text>
+        </View>
+        <View style={styles.infoBadge}>
+          <Text style={styles.infoBadgeText}>• 1 Player</Text>
         </View>
       </View>
 
@@ -119,7 +122,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   infoRow: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     gap: 10,
     paddingHorizontal: 20,
     paddingVertical: 16,

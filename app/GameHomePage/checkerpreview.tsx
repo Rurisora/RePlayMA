@@ -35,7 +35,10 @@ export default function CheckerPreview() {
       {/* Info */}
       <View style={styles.infoRow}>
         <View style={styles.infoBadge}>
-          <Text style={styles.infoBadgeText}>2 Players</Text>
+          <Text style={styles.infoBadgeText}>Player Count:</Text>
+        </View>
+        <View style={styles.infoBadge}>
+          <Text style={styles.infoBadgeText}>• 2 Players</Text>
         </View>
       </View>
 
@@ -55,6 +58,7 @@ export default function CheckerPreview() {
         <Text style={styles.sectionText}>• Tap a piece to select it</Text>
         <Text style={styles.sectionText}>• Tap a highlighted square to move</Text>
         <Text style={styles.sectionText}>• Jump over opponent pieces to capture them</Text>
+        <Text style={styles.sectionText}>• Red vs. Black move 12 identical discs diagonally</Text>
         <Text style={styles.sectionText}>• Chain jumps are required when available</Text>
         <Text style={styles.sectionText}>• Reach the far end to become a King</Text>
       </View>
@@ -121,7 +125,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   infoRow: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     gap: 10,
     paddingHorizontal: 20,
     paddingVertical: 16,
@@ -130,7 +134,6 @@ const styles = StyleSheet.create({
   infoBadge: {
     backgroundColor: '#f0f0f0',
     borderRadius: 20,
-    paddingHorizontal: 12,
     paddingVertical: 6,
   },
   infoBadgeText: {
