@@ -750,6 +750,7 @@ export default function ChessGameScreen() {
   );
 }
 
+// STYLES
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: "center", justifyContent: "center" },
   title: { fontSize: 24, fontWeight: "bold" },
