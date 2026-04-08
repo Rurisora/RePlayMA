@@ -312,6 +312,13 @@ export default function ChessGameScreen() {
   const [mustContinueJump, setMustContinueJump] = useState(false);
   const [time, setTime] = useState(0);
   const [loading, setLoading] = useState(true);
+  const isWhiteInCheck = isKingInCheck(gameState.board, "white");
+  const isBlackInCheck = isKingInCheck(gameState.board, "black");
+  const check: "white" | "black" | null = isWhiteInCheck
+    ? "white"
+    : isBlackInCheck
+      ? "black"
+      : null;
 
   const router = useRouter();
   useEffect(() => {
@@ -392,6 +399,13 @@ export default function ChessGameScreen() {
           : `${gameState.currentPlayer}'s turn`}
       </Text>
       <Text style={styles.timer}>Time: {formatTime(time)}</Text>
+      <Text style={styles.info}>
+        {gameState.winner
+          ? `${gameState.winner.toUpperCase()} wins!`
+          : check
+            ? `${check.toUpperCase()} KING IS IN CHECK! ⚠️`
+            : `${gameState.currentPlayer}'s turn`}
+      </Text>
 
       <View style={styles.board}>
         {gameState.board.map((row, r) => (
@@ -453,7 +467,7 @@ const styles = StyleSheet.create({
     width: 320,
     height: 320,
     borderWidth: 4,
-    borderColor: "#ef1212",
+    borderColor: "#000",
     borderRadius: 8,
     overflow: "hidden",
   },
