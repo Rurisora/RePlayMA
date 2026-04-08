@@ -34,9 +34,6 @@ export default function ChessPreview() {
       {/* Info */}
       <View style={styles.infoRow}>
         <View style={styles.infoBadge}>
-          <Text style={styles.infoBadgeText}>⭐ 4.6</Text>
-        </View>
-        <View style={styles.infoBadge}>
           <Text style={styles.infoBadgeText}>⏱ 10m avg</Text>
         </View>
         <View style={styles.infoBadge}>
@@ -56,9 +53,6 @@ export default function ChessPreview() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>How to Play</Text>
-        <Text style={styles.sectionText}>• Tap a piece to see valid moves</Text>
-        <Text style={styles.sectionText}>• Tap a highlighted square to move</Text>
-        <Text style={styles.sectionText}>• Capture opponent pieces by moving onto them</Text>
         <Text style={styles.sectionText}>• Put the opponent's King in checkmate to win</Text>
         <Text style={styles.sectionText}>• Special moves: castling, en passant, promotion</Text>
       </View>

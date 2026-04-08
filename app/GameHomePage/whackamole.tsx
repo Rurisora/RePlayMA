@@ -34,9 +34,6 @@ export default function WhackAMolePreview() {
       {/* Info */}
       <View style={styles.infoRow}>
         <View style={styles.infoBadge}>
-          <Text style={styles.infoBadgeText}>⭐ 4.6</Text>
-        </View>
-        <View style={styles.infoBadge}>
           <Text style={styles.infoBadgeText}>⏱ 10m avg</Text>
         </View>
         <View style={styles.infoBadge}>
@@ -59,8 +56,7 @@ export default function WhackAMolePreview() {
         <Text style={styles.sectionText}>• Watch for moles popping up on the grid</Text>
         <Text style={styles.sectionText}>• Tap a mole quickly to score a point</Text>
         <Text style={styles.sectionText}>• Moles disappear after a short time</Text>
-        <Text style={styles.sectionText}>• Miss too many and the game ends</Text>
-        <Text style={styles.sectionText}>• Try to beat your best score!</Text>
+        <Text style={styles.sectionText}>• Hitting 100 point to win</Text>
       </View>
 
       {/* Action buttons */}

@@ -63,23 +63,6 @@ export default function GameHomePageIndex() {
 
         <View style={{ height: 100 }} />
       </ScrollView>
-
-      {/* Bottom Nav - Kept as your original structure */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>🏠︎</Text>
-          <View style={styles.activeDotIndicator} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>🕐</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>🩶</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>⚙️</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -177,30 +160,4 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
-  bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderTopWidth: 0,
-  },
-  navItem: {
-    alignItems: 'center',
-    width: 44,
-  },
-  navDot: { fontSize: 12, color: '#111' },
-  activeDotIndicator: {
-    width: 4,
-    height: 4,
-    backgroundColor: 'red',
-    borderRadius: 2,
-    marginTop: 4,
-  },
-  navIcon: { fontSize: 22, color: '#CCC' },
 });

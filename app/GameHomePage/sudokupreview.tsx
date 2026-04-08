@@ -34,9 +34,6 @@ export default function SudokuPreview() {
       {/* Info */}
       <View style={styles.infoRow}>
         <View style={styles.infoBadge}>
-          <Text style={styles.infoBadgeText}>⭐ 4.6</Text>
-        </View>
-        <View style={styles.infoBadge}>
           <Text style={styles.infoBadgeText}>⏱ 10m avg</Text>
         </View>
         <View style={styles.infoBadge}>
@@ -49,8 +46,8 @@ export default function SudokuPreview() {
         <Text style={styles.sectionTitle}>About</Text>
         <Text style={styles.sectionText}>
           Sudoku is a relaxing number puzzle played on a 9×9 grid. Fill every row, column,
-          and 3×3 box with the digits 1–9 without repeating any number. Choose your difficulty —
-          Easy, Medium, or Hard — and challenge yourself to finish as fast as possible.
+          and 3×3 box with the digits 1–9 without repeating any number. Choose your difficulty
+          Easy, Medium, or Hard and challenge yourself to finish as fast as possible.
         </Text>
       </View>
 
