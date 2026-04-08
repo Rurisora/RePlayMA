@@ -9,7 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
-import { Audio } from "expo-av";
+// import { Audio } from "expo-av";
 import { JSX } from "react/jsx-runtime";
 
 const GRID_SIZE = 9;
@@ -38,17 +38,17 @@ export default function Index(): JSX.Element {
   const MOLE_DURATION = 800; // how long mole stays
 
   // ADDED: play sound helper
-  const playSound = async (soundFile: any) => {
-    const { sound } = await Audio.Sound.createAsync(soundFile);
-    await sound.playAsync();
+  // const playSound = async (soundFile: any) => {
+  //   const { sound } = await Audio.Sound.createAsync(soundFile);
+  //   await sound.playAsync();
 
-    // auto cleanup
-    sound.setOnPlaybackStatusUpdate((status) => {
-      if ((status as any).didJustFinish) {
-        sound.unloadAsync();
-      }
-    });
-  };
+  //   // auto cleanup
+  //   sound.setOnPlaybackStatusUpdate((status) => {
+  //     if ((status as any).didJustFinish) {
+  //       sound.unloadAsync();
+  //     }
+  //   });
+  // };
 
    // CHANGED: use timeout loop instead of interval
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function Index(): JSX.Element {
       setIsPlaying(false);
       setMoleIndex(null);
 
-      playSound(require("./sounds/win.wav")); // ADDED
+      // playSound(require("./sounds/win.wav")); // ADDED
       alert(`🎉 You Win! Final score: ${score}`);
     }
   }, [score, isPlaying]);
@@ -115,7 +115,7 @@ export default function Index(): JSX.Element {
       setIsPlaying(false);
       setMoleIndex(null);
 
-      playSound(require("./sounds/game_over.wav")); // ADDED
+      // playSound(require("./sounds/game_over.wav")); // ADDED
       alert(`Game Over! Your score: ${score}`);
     }
   }, [timeLeft, score]);
@@ -180,7 +180,7 @@ export default function Index(): JSX.Element {
     setHammer({ x: locationX, y: locationY, index });
 
     if (index === moleIndex) {
-      playSound(require("./sounds/hit.wav")); // ADDED
+      // playSound(require("./sounds/hit.wav")); // ADDED
       Animated.sequence([
         Animated.timing(scaleAnim, {
           toValue: 0.6,
