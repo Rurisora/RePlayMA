@@ -34,9 +34,6 @@ export default function WhackAMolePreview() {
       {/* Info */}
       <View style={styles.infoRow}>
         <View style={styles.infoBadge}>
-          <Text style={styles.infoBadgeText}>⏱ 10m avg</Text>
-        </View>
-        <View style={styles.infoBadge}>
           <Text style={styles.infoBadgeText}>Solo</Text>
         </View>
       </View>
