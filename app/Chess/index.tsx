@@ -31,7 +31,7 @@ export default function ChessMenuScreen() {
       <Text style={styles.title}>Welcome to Chess World</Text>
 
       <Image
-        source={require("../../src/assets/images/board.png")}
+        source={require("../../src/assets/images/board_1.png")}
         style={styles.image}
       />
 
