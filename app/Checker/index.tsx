@@ -25,21 +25,79 @@ export default function CheckerMenuScreen() {
     router.push("/Checker/checkerGame");
   };
 
+  const handleBackToHome = () => {
+    router.push("/");
+  };
+
+  const renderPreviewBoard = () => {
+    const rows = [];
+
+    for (let row = 0; row < 8; row++) {
+      const cols = [];
+
+      for (let col = 0; col < 8; col++) {
+        const isDark = (row + col) % 2 === 1;
+
+        let pieceColor: "red" | "black" | null = null;
+
+        if (isDark && row < 3) {
+          pieceColor = "black";
+        } else if (isDark && row > 4) {
+          pieceColor = "red";
+        }
+
+        cols.push(
+          <View
+            key={`${row}-${col}`}
+            style={[
+              styles.previewSquare,
+              isDark ? styles.previewDarkSquare : styles.previewLightSquare,
+            ]}
+          >
+            {pieceColor && (
+              <View
+                style={[
+                  styles.previewPiece,
+                  pieceColor === "red"
+                    ? styles.previewRedPiece
+                    : styles.previewBlackPiece,
+                ]}
+              />
+            )}
+          </View>,
+        );
+      }
+
+      rows.push(
+        <View key={row} style={styles.previewRow}>
+          {cols}
+        </View>,
+      );
+    }
+
+    return rows;
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Checker Game Screen</Text>
+      <Text style={styles.title}>Welcome to Checkers</Text>
 
-      <Pressable style={styles.blueButton} onPress={handleNewGame}>
-        <Text style={styles.buttonText}>NEW GAME</Text>
-      </Pressable>
+      <View style={styles.previewBoard}>{renderPreviewBoard()}</View>
+      <Text style={styles.subtitle}>Lets play some Canadian Checkers</Text>
 
-      <Pressable style={styles.blueButton} onPress={handleContinue}>
-        <Text style={styles.buttonText}>CONTINUE</Text>
-      </Pressable>
+      <View style={styles.buttonContainer}>
+        <Pressable style={styles.button} onPress={handleNewGame}>
+          <Text style={styles.buttonText}>NEW GAME</Text>
+        </Pressable>
 
-      <Pressable style={styles.blueButton} onPress={() => router.push("/")}>
-        <Text style={styles.buttonText}>BACK TO HOME</Text>
-      </Pressable>
+        <Pressable style={styles.button} onPress={handleContinue}>
+          <Text style={styles.buttonText}>CONTINUE</Text>
+        </Pressable>
+
+        <Pressable style={styles.button} onPress={handleBackToHome}>
+          <Text style={styles.buttonText}>BACK TO HOME</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -53,23 +111,67 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 18,
-    marginBottom: 12,
-    color: "#222",
+    fontSize: 22,
+    color: "#333",
+    fontWeight: "600",
+    marginBottom: 20,
   },
-  blueButton: {
-    backgroundColor: "#2ea3ff",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    minWidth: 140,
+  previewBoard: {
+    width: 256,
+    height: 256,
+    borderWidth: 2,
+    borderColor: "black",
+    marginBottom: 15,
+  },
+  previewRow: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  previewSquare: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    marginVertical: 6,
-    borderRadius: 2,
+    borderWidth: 0.5,
+    borderColor: "#111",
+  },
+  previewLightSquare: {
+    backgroundColor: "#e7e7e7",
+  },
+  previewDarkSquare: {
+    backgroundColor: "#7d7d7d",
+  },
+  previewPiece: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+  },
+  previewRedPiece: {
+    backgroundColor: "#d22",
+  },
+  previewBlackPiece: {
+    backgroundColor: "#333",
+  },
+  buttonContainer: {
+    marginTop: 10,
+  },
+  button: {
+    width: 200,
+    padding: 12,
+    backgroundColor: "#6c8cd5",
+    borderRadius: 10,
+    marginVertical: 5,
+    alignItems: "center",
     elevation: 3,
   },
   buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  subtitle: {
+  fontSize: 16,
+  fontWeight: "700",
+  color: "#111",
+  textAlign: "center",
+  marginBottom: 4,
   },
 });
