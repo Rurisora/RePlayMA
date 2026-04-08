@@ -11,6 +11,7 @@
       "icon": ""
     },
     "android": {
+      "package": "com.sherry.replayma",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "",
