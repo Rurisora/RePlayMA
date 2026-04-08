@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { createNewGameState } from "../../utils/chessLogic";
 import { loadChessGame, saveChessGame } from "../../utils/chessStorage";
 import type { ChessGameState } from "../../utils/chessTypes";
@@ -28,7 +28,12 @@ export default function ChessMenuScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Chess Game Screen</Text>
+      <Text style={styles.title}>Welcome to Chess World</Text>
+
+      <Image
+        source={require("../../src/assets/images/board.png")}
+        style={styles.image}
+      />
 
       <Pressable style={styles.blueButton} onPress={handleNewGame}>
         <Text style={styles.buttonText}>NEW GAME</Text>
@@ -52,6 +57,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+  },
+  image: {
+    width: 250,
+    height: 250,
+    marginVertical: 20,
+    resizeMode: "contain",
   },
   title: {
     fontSize: 18,

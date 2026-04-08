@@ -464,7 +464,7 @@ export default function ChessGameScreen() {
       <Pressable style={styles.button} onPress={handleNewGame}>
         <Text style={styles.buttonText}>New Game</Text>
       </Pressable>
-      <Pressable style={styles.blackButton} onPress={handleQuit}>
+      <Pressable style={styles.button} onPress={handleQuit}>
         <Text style={styles.buttonText}>QUIT</Text>
       </Pressable>
 
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
   piece: { fontSize: 26 },
 
   button: {
-    backgroundColor: "#2ea3ff",
+    backgroundColor: "#6c8cd5",
     padding: 10,
     marginTop: 15,
     width: 140,
