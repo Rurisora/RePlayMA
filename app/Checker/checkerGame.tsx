@@ -2,13 +2,13 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import {
-    createNewGameState,
-    formatTime,
-    getAllowedMovesForPiece,
-    getJumpMoves,
-    getNextPlayer,
-    getWinner,
-    movePiece,
+  createNewGameState,
+  formatTime,
+  getAllowedMovesForPiece,
+  getJumpMoves,
+  getNextPlayer,
+  getWinner,
+  movePiece,
 } from "../../utils/checkerLogic";
 import { loadCheckerGame, saveCheckerGame } from "../../utils/checkerStorage";
 import { CheckerGameState, Move, Position, Square } from "../../utils/checkerTypes";
@@ -216,11 +216,11 @@ export default function CheckerGameScreen() {
         ))}
       </View>
 
-      <Pressable style={styles.blueButton} onPress={handleNewGame}>
+      <Pressable style={styles.button} onPress={handleNewGame}>
         <Text style={styles.buttonText}>NEW GAME</Text>
       </Pressable>
 
-      <Pressable style={styles.redButton} onPress={handleQuit}>
+      <Pressable style={styles.button} onPress={handleQuit}>
         <Text style={styles.buttonText}>QUIT</Text>
       </Pressable>
 
@@ -231,18 +231,13 @@ export default function CheckerGameScreen() {
         onRequestClose={() => setShowWinnerModal(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Game Over</Text>
-            <Text style={styles.modalText}>
-              {gameState.winner?.toUpperCase()} wins!
-            </Text>
-
-            <Pressable style={styles.modalBlueButton} onPress={handleNewGame}>
-              <Text style={styles.buttonText}>NEW GAME</Text>
+          <View style={styles.buttonContainer}>
+            <Pressable style={styles.button} onPress={handleNewGame}>
+              <Text style={styles.buttonText}>New Game</Text>
             </Pressable>
 
-            <Pressable style={styles.modalRedButton} onPress={handleQuit}>
-              <Text style={styles.buttonText}>QUIT</Text>
+            <Pressable style={[styles.button, styles.button]} onPress={handleQuit}>
+              <Text style={styles.buttonText}>Quit</Text>
             </Pressable>
           </View>
         </View>
@@ -331,29 +326,20 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 12,
   },
-  blueButton: {
-    backgroundColor: "#2ea3ff",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    minWidth: 140,
-    alignItems: "center",
-    marginBottom: 10,
-    borderRadius: 2,
-    elevation: 3,
+  buttonContainer: {
+  marginTop: 20,
   },
-  redButton: {
-    backgroundColor: "#ff1616",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    minWidth: 140,
+  button: {
+    width: 200,
+    padding: 12,
+    backgroundColor: "#6c8cd5",
+    borderRadius: 10,
+    marginVertical: 5,
     alignItems: "center",
-    borderRadius: 2,
-    elevation: 3,
   },
   buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
+    color: "#fff",
+    fontWeight: "bold",
   },
   modalOverlay: {
     flex: 1,
