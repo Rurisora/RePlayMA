@@ -512,7 +512,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#6c8cd5",
     padding: 10,
     marginTop: 15,
-    width: 140,
+    width: 200,
     alignItems: "center",
     borderRadius: 8,
   },
